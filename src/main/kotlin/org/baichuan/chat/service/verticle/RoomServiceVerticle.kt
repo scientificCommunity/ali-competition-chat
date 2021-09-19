@@ -3,12 +3,8 @@ package org.baichuan.chat.service.verticle
 import io.vertx.core.AbstractVerticle
 import io.vertx.serviceproxy.ServiceBinder
 import org.baichuan.chat.commons.constants.ServiceAddressConstants
-import org.baichuan.chat.service.MessageService
 import org.baichuan.chat.service.RoomService
-import org.baichuan.chat.service.UserService
-import org.baichuan.chat.service.impl.MessageServiceImpl
 import org.baichuan.chat.service.impl.RoomServiceImpl
-import org.baichuan.chat.service.impl.UserServiceImpl
 
 /**
  * @author: tk (rivers.boat.snow@gmail.com)

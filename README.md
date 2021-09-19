@@ -2,15 +2,15 @@
 [![chat on gitlab](https://img.shields.io/gitter/room/mampod/payment?logo=github)](https://github.com/scientificCommunity/blog-sample/issues)
 
 阿里云天池举办的[web应用性能挑战赛](https://tianchi.aliyun.com/competition/entrance/531907/rankingList/1) 参赛作品。
-# 其他版本
+# 其他版本实现
 [redis](https://github.com/scientificCommunity/ali-competition-chat)
 
-[psql+消息顺序读写磁盘]()
+[PostgreSQL](https://github.com/scientificCommunity/ali-competition-chat/tree/feature/psql)
 # 关于比赛成绩
 初赛360分,第一次提交排名为16，最终是在30名左右。后面因为骨折，错过了实名认证，导致成绩跟复赛资格被取消。
 
 # 技术栈
-采用`vertx`作为程序的基本框架，`PostgreSQL`提供数据持久化功能
+采用`vertx`作为程序的基本框架，`PostgreSQL`提供数据持久化功能，消息读取跟检索直接操作文件，批量写入跟读取相对操作psql而言性能提升超过30倍
 
 # 快速开始
 1. 先通过[脚本](scripts/init.sql)初始化数据库。
