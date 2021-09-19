@@ -5,7 +5,7 @@
 # 其他版本
 [redis](https://github.com/scientificCommunity/ali-competition-chat)
 
-[psql+消息顺序读写磁盘]()
+[PostgreSQL+消息顺序读写磁盘](https://github.com/scientificCommunity/ali-competition-chat/tree/feature/psql-read-disk)
 # 关于比赛成绩
 初赛360分,第一次提交排名为16，最终是在30名左右。后面因为骨折，错过了实名认证，导致成绩跟复赛资格被取消。
 
