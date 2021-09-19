@@ -1,0 +1,1 @@
+java -Xmx6g -Xms6g -Xmn4g -XX:MetaspaceSize=128M -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:/root/jvm-gc.log -jar game-chat-1.0-SNAPSHOT.jar &> run.log &
