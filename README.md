@@ -3,9 +3,9 @@
 
 阿里云天池举办的[web应用性能挑战赛](https://tianchi.aliyun.com/competition/entrance/531907/rankingList/1) 参赛作品。
 # 其他版本
-[psql]()
+[PostgreSQL](https://github.com/scientificCommunity/ali-competition-chat/tree/feature/psql)
 
-[psql+消息顺序读写磁盘]()
+[PostgreSQL+消息顺序读写磁盘](https://github.com/scientificCommunity/ali-competition-chat/tree/feature/psql-read-disk)
 # 关于比赛成绩
 初赛360分,第一次提交排名为16，最终是在30名左右。后面因为骨折，错过了实名认证，导致成绩跟复赛资格被取消。
 
