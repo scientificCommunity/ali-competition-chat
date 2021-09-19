@@ -1,4 +1,4 @@
-# ali-competition-chat-redis
+# ali-competition-chat
 [![chat on gitlab](https://img.shields.io/gitter/room/mampod/payment?logo=github)](https://github.com/scientificCommunity/blog-sample/issues)
 
 阿里云天池举办的[web应用性能挑战赛](https://tianchi.aliyun.com/competition/entrance/531907/rankingList/1) 参赛作品。
