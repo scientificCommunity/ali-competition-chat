@@ -9,16 +9,14 @@ import io.vertx.core.DeploymentOptions
  */
 class ServiceVerticle : AbstractVerticle() {
     override fun start() {
-        vertx.deployVerticle(RedisVerticle::class.java, DeploymentOptions().setInstances(1)).onSuccess {
-            //因为user跟room用了本地缓存，如果多实例的话需要考虑线程同步
-            vertx.deployVerticle(UserServiceVerticle::class.java, DeploymentOptions().setInstances(4))
-            vertx.deployVerticle(RoomServiceVerticle::class.java, DeploymentOptions().setInstances(4))
+        //因为user跟room用了本地缓存，如果多实例的话需要考虑线程同步
+        vertx.deployVerticle(UserServiceVerticle::class.java, DeploymentOptions().setInstances(1))
+        vertx.deployVerticle(RoomServiceVerticle::class.java, DeploymentOptions().setInstances(16))
 
-            vertx.deployVerticle(MessageServiceVerticle::class.java, DeploymentOptions().setInstances(8))
-        }
+        vertx.deployVerticle(MessageServiceVerticle::class.java, DeploymentOptions().setInstances(32))
     }
 
     override fun stop() {
-        println("系统中止")
+
     }
 }

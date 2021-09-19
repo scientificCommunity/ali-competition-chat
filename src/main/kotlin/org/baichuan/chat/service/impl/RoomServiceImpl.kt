@@ -4,43 +4,43 @@ import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonArray
-import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.api.service.ServiceRequest
 import io.vertx.ext.web.api.service.ServiceResponse
-import org.baichuan.chat.commons.extend.badRequest
-import org.baichuan.chat.commons.extend.jsonArraySucceed
-import org.baichuan.chat.commons.extend.plainTextSucceed
-import org.baichuan.chat.commons.extend.subscribeTemplate
-import org.baichuan.chat.service.RedisFactory
+import io.vertx.sqlclient.Tuple
+import org.baichuan.chat.bean.dto.CreateRoomDTO
+import org.baichuan.chat.bean.dto.ListRoomsDTO
+import org.baichuan.chat.commons.constants.CacheSizeConstants
+import org.baichuan.chat.commons.extend.*
+import org.baichuan.chat.commons.utils.whisper.ObfuscatorHolder
+import org.baichuan.chat.db.DbHolder
+import org.baichuan.chat.db.DbHolder.sqlClient
+import org.baichuan.chat.db.DbHolder.sqlCreator
+import org.baichuan.chat.db.dao.RoomDaoFactory
+import org.baichuan.chat.jooq.Tables.G_ROOM
 import org.baichuan.chat.service.RoomService
 import org.baichuan.chat.service.RoomServiceLocalCache
-import java.util.*
+import org.baichuan.chat.service.RoomServiceLocalCache.roomNameCache
 
 /**
  * @author: tk (rivers.boat.snow at gmail dot com)
  * @date: 2021/7/9
  */
 class RoomServiceImpl(private val vertx: Vertx) : RoomService {
-    val redis = RedisFactory.getClient()
-
-    private val zSetRoomKey = "rooms"
-    private val zSetRoomValueScore = "1"
 
     override fun createRoom(
-        body: JsonObject,
+        body: CreateRoomDTO,
         context: ServiceRequest,
         resultHandler: Handler<AsyncResult<ServiceResponse>>
     ) {
-        val roomName = body.getString("name")
-        val roomId = UUID.randomUUID().toString()
-
-        redis.rxSetnx(roomId, roomName).subscribeTemplate(resultHandler) {
-            redis.rxZadd(listOf(zSetRoomKey, "NX", zSetRoomValueScore, roomName)).subscribeTemplate(resultHandler, {
-                resultHandler.plainTextSucceed(roomId)
-            }, {
-                resultHandler.plainTextSucceed(roomId)
-            })
-        }
+        sqlCreator!!
+            .insertInto(G_ROOM, G_ROOM.NAME)
+            .values(body.name)
+            .returning(G_ROOM.ID)
+            .executeMustHaveOneResult(resultHandler) {
+                val id = it.getLong(G_ROOM.ID.name).toString()
+                resultHandler.plainTextSucceed(id)
+                RoomServiceLocalCache.roomCache[id] = body.name
+            }
     }
 
     override fun enterRoom(
@@ -48,28 +48,72 @@ class RoomServiceImpl(private val vertx: Vertx) : RoomService {
         context: ServiceRequest,
         resultHandler: Handler<AsyncResult<ServiceResponse>>
     ) {
-        redis.rxGet(roomid).subscribeTemplate(resultHandler, {
-            val username = context.user.getString("username")
+        val roomId = roomid.toLong()
 
-            RoomServiceLocalCache.usernameRoomIdCache[username] = roomid
-            RoomServiceLocalCache.put(username, roomid)
+        //先判断有没有这个room
+        sqlCreator!!.select(G_ROOM.ID)
+            .from(G_ROOM)
+            .where(G_ROOM.ID.eq(roomId))
+            .limit(1)
+            .apply {
+                sqlClient!!.delegate.preparedQuery(sql).execute(Tuple.tuple(bindValues))
+                    .onSuccess {
+                        if (it.size() <= 0) {
+                            resultHandler.badRequest()
+                        } else {
+                            val username = context.user.getString("username")
+                            RoomServiceLocalCache.usernameRoomIdCache[username] = roomId
+                            RoomServiceLocalCache.put(username, roomId)
 
-            if (RoomServiceLocalCache.roomIdUsernameCache.containsKey(roomid)) {
-                RoomServiceLocalCache.roomIdUsernameCache[roomid]!!.add(username)
-            } else {
-                RoomServiceLocalCache.roomIdUsernameCache[roomid] = mutableSetOf(username)
+                            if (RoomServiceLocalCache.roomIdUsernameCache.containsKey(roomId)) {
+                                RoomServiceLocalCache.roomIdUsernameCache[roomId]!!.add(username)
+                            } else {
+                                RoomServiceLocalCache.roomIdUsernameCache[roomId] = mutableSetOf(username)
+                            }
+                            resultHandler.plainTextSucceed()
+                        }
+                    }
             }
+    }
 
-            resultHandler.plainTextSucceed()
-        })
+    override fun getRoom(
+        roomid: String,
+        context: ServiceRequest,
+        resultHandler: Handler<AsyncResult<ServiceResponse>>
+    ) {
+        if (RoomServiceLocalCache.roomCache.containsKey(roomid)) {
+            resultHandler.plainTextSucceed(RoomServiceLocalCache.roomCache[roomid])
+        } else {
+            sqlCreator!!
+                .select(G_ROOM.NAME)
+                .from(G_ROOM)
+                .where(G_ROOM.ID.eq(roomid.toLong()))
+                .executeMustHaveOneResult(resultHandler) {
+                    resultHandler.plainTextSucceed(it.getString(G_ROOM.NAME.name))
+                }
+        }
+    }
 
-        /*redis.rxGet(roomid).subscribeTemplate(resultHandler) {
-            val username = context.user.getString("username")
-            redis.rxSet(listOf(username, roomid))
-            redis.rxZadd(listOf(roomid, "NX", zSetRoomValueScore, username))
+    override fun getUserListFromRoom(
+        roomid: String,
+        context: ServiceRequest,
+        resultHandler: Handler<AsyncResult<ServiceResponse>>
+    ) {
+        val roomId: Long?
+        try {
+            roomId = roomid.toLong()
+        } catch (e: Exception) {
+            resultHandler.badRequest()
+            return
+        }
 
-            resultHandler.plainTextSucceed()
-        }*/
+        if (!RoomServiceLocalCache.roomIdUsernameCache.containsKey(roomId)) {
+            resultHandler.badRequest()
+        }
+
+        resultHandler.plainTextSucceed(
+            RoomServiceLocalCache.roomIdUsernameCache[roomId]
+        )
     }
 
     override fun leaveRoom(
@@ -86,52 +130,50 @@ class RoomServiceImpl(private val vertx: Vertx) : RoomService {
         resultHandler.plainTextSucceed()
     }
 
-    override fun getRoom(
-        roomid: String,
-        context: ServiceRequest,
-        resultHandler: Handler<AsyncResult<ServiceResponse>>
-    ) {
-        redis.rxGet(roomid).subscribeTemplate(resultHandler) {
-            resultHandler.plainTextSucceed(it.toString())
-        }
-    }
-
-    override fun getUserListFromRoom(
-        roomid: String,
-        context: ServiceRequest,
-        resultHandler: Handler<AsyncResult<ServiceResponse>>
-    ) {
-        if (!RoomServiceLocalCache.roomIdUsernameCache.containsKey(roomid)) {
-            resultHandler.badRequest()
-        }
-        redis.rxGet(roomid).subscribeTemplate(resultHandler, {
-            val result = JsonArray()
-            RoomServiceLocalCache.roomIdUsernameCache[roomid]!!.forEach { username ->
-                result.add(username)
-            }
-            resultHandler.jsonArraySucceed(result)
-        })
-    }
-
     override fun listRooms(
-        body: JsonObject,
+        body: ListRoomsDTO,
         context: ServiceRequest,
         resultHandler: Handler<AsyncResult<ServiceResponse>>
     ) {
-        val pageIndex = body.getInteger("pageIndex")
-        val pageSize = body.getInteger("pageSize")
-        val startIndex = (pageIndex - 1) * pageSize
-        val endIndex = startIndex + pageSize - 1
+        val startIndex = (body.pageIndex!! - 1) * body.pageSize!!
+        if (startIndex < roomNameCache.size) {
+            val jsonArray = JsonArray()
 
-        redis.rxZrange(listOf(zSetRoomKey, startIndex.toString(), endIndex.toString()))
-            .subscribeTemplate(resultHandler, {
-                val result = JsonArray()
-                it.forEach { single ->
-                    result.add(single.toString())
-                }
-                resultHandler.jsonArraySucceed(result)
-            }) {
-                resultHandler.jsonArraySucceed(JsonArray())
+            var i = startIndex
+            while (i < startIndex + body.pageSize!! && i < roomNameCache.size) {
+                jsonArray.add(roomNameCache[i])
+                i++
+            }
+
+            resultHandler.jsonArraySucceed(jsonArray)
+            return
+        }
+
+        sqlCreator!!.select(G_ROOM.NAME)
+            .from(G_ROOM)
+            .offset((body.pageIndex!! - 1) * body.pageSize!!)
+            .limit(body.pageSize!!)
+            .executeWithJsonList(resultHandler)
+    }
+
+    override fun initRoomCache(context: ServiceRequest, resultHandler: Handler<AsyncResult<ServiceResponse>>) {
+        sqlCreator!!
+            .select(
+                G_ROOM.ID,
+                G_ROOM.NAME
+            )
+            .from(G_ROOM)
+            .offset(0)
+            .limit(CacheSizeConstants.size_524288)
+            .apply {
+                DbHolder.sqlClient!!.delegate.preparedQuery(sql).execute(Tuple.tuple(bindValues)).onSuccess {
+                    it.map { row ->
+                        val roomName = row.getString(G_ROOM.NAME.name)
+                        RoomServiceLocalCache.roomCache[row.getString(G_ROOM.ID.name)] = roomName
+
+                        roomNameCache.add(roomName)
+                    }
+                }.onFailure { resultHandler.badRequest() }
             }
     }
 }

@@ -3,6 +3,7 @@ package org.baichuan.chat.commons.utils
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import org.baichuan.chat.commons.holder.JWTHolder
+import org.baichuan.chat.jooq.tables.pojos.GUser
 
 /**
  * @author: tk (rivers.boat.snow at gmail dot com)

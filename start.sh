@@ -7,7 +7,7 @@ fi
 option=$1
 echo $1
 zip_file_name="application.zip"
-app_file_name="game-chat-redis-1.0-SNAPSHOT.jar"
+app_file_name="game-chat-1.0-SNAPSHOT.jar"
 
 # shellcheck disable=SC2120
 # shellcheck disable=SC2112
@@ -18,6 +18,8 @@ function deploy() {
   cd ~ || exit
   # +x and execute
   chmod +x "${app_file_name}"
+  #初始化db
+  expect db_init.sh
 }
 
 # shellcheck disable=SC2120
@@ -25,18 +27,14 @@ function deploy() {
 function run() {
   echo "start app time: $(date "+%Y-%m-%d %H:%M:%S")" >> ~/run_function.log
   cd ~ || exit
-
-  #初始化db
-  bash redis-start.sh
   # 等待db初始化
-  sleep 5
+  sleep 20
   #重启后报java: command not found？
   source /etc/profile
   # 请务必使用后台运行的方式
-#  java -Xmx6g -Xms6g -Xmn4g -jar ./"${app_file_name}" &> start.log &
-  java -Xmx4g -Xms4g -Xmn2g -jar ./"${app_file_name}" &> start.log &
+  java -Xmx6g -Xms6g -Xmn4g -jar ./"${app_file_name}" &> start.log &
 
-  sleep 110
+  sleep 40
 #  sh fire.sh
   echo "end app time: $(date "+%Y-%m-%d %H:%M:%S")" >> ~/run_function.log
   echo "------------------------------------------" >> ~/run_function.log

@@ -62,10 +62,14 @@ dependencies {
     implementation "io.vertx:vertx-lang-kotlin-coroutines:${vertxVersion}"
 
     //db
+    implementation "io.vertx:vertx-pg-client:${vertxVersion}"
+    implementation "io.vertx:vertx-sql-client-templates:${vertxVersion}"
     implementation "io.vertx:vertx-redis-client:${vertxVersion}"
 
 
     implementation "io.vertx:vertx-service-proxy:${vertxVersion}"
+//    implementation "io.vertx:vertx-web-proxy:${vertxVersion}"
+//    kapt "io.vertx:vertx-web-proxy:${vertxVersion}"
 
     implementation "io.vertx:vertx-codegen:${vertxVersion}"
     implementation "io.vertx:vertx-codegen:${vertxVersion}:processor"
@@ -77,11 +81,24 @@ dependencies {
     implementation "io.vertx:vertx-web-api-service:${vertxVersion}"
     //implementation "io.vertx:vertx-config-yaml:${vertxVersion}"
 
-    //cache
-    implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.9.0'
+    //jooq
+    implementation "org.jooq:jooq:${jooqVersion}"
+    implementation "org.jooq:jooq-meta:${jooqVersion}"
+    implementation "org.jooq:jooq-codegen:${jooqVersion}"
+    //升级至13
+//    implementation "org.postgresql:postgresql:9.4.1212"
+    // 对于psql 13
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.23'
+    //服务端密码验证方式是scram-sha-256时启用该依赖。参见pg_hba.conf
+    //implementation("com.ongres.scram:client:2.1")
 
+    //lombok
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
-    //log
+    testCompileOnly 'org.projectlombok:lombok:1.18.16'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+
     implementation "ch.qos.logback:logback-classic:1.2.3"
 
     idea {
@@ -91,6 +108,44 @@ dependencies {
             sourceDirs += file("src/generated/main/grpc")
             generatedSourceDirs += file("src/generated")
             generatedSourceDirs += file("src/generated/main/java")
+        }
+    }
+}
+
+
+import org.jooq.codegen.GenerationTool
+import org.jooq.meta.jaxb.*
+
+def props = new Properties()
+props.load(new FileReader(file("./jooq.properties")))
+GenerationTool.generate(new Configuration()
+        .withJdbc(new Jdbc()
+                .withDriver('org.postgresql.Driver')
+                .withUrl("jdbc:postgresql://${props.getProperty("host")}:${props.getProperty("port")}/${props.getProperty("database")}")
+                .withUser(props.getProperty("username"))
+                .withPassword(props.getProperty("password")))
+        .withGenerator(new Generator()
+                .withDatabase(new Database()
+                        .withName("org.jooq.meta.postgres.PostgresDatabase")
+                        .withInputSchema("public")
+                        .withIncludes(".*")
+                        .withDateAsTimestamp(true))
+                .withGenerate(new Generate()
+                        .withPojos(true)
+                        .withDaos(true)
+                        .withJavaTimeTypes(true)
+                        .withCommentsOnKeys(true))
+                .withTarget(new Target()
+                        .withPackageName('org.baichuan.chat.jooq')
+                        .withDirectory('src/generated/main/java')
+                        .withEncoding("UTF-8"))))
+sourceSets {
+    main {
+        java {
+            srcDir 'src/generated/main/java'
+        }
+        resources {
+            srcDir "src/main/resources"
         }
     }
 }

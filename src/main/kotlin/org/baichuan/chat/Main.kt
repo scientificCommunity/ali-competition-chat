@@ -1,6 +1,7 @@
 package org.baichuan.chat
 
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
@@ -15,6 +16,8 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.ext.web.openapi.RouterBuilder
 import org.baichuan.chat.commons.holder.JWTHolder
+import org.baichuan.chat.commons.utils.whisper.ObfuscatorHolder
+import org.baichuan.chat.db.verticle.PostgreSqlVerticle
 import org.baichuan.chat.service.verticle.ServiceVerticle
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -29,6 +32,10 @@ class Main : AbstractVerticle() {
     private val log = LoggerFactory.getLogger(Main::class.java)
 
     override fun start() {
+        vertx.deployVerticle(
+            PostgreSqlVerticle::class.java,
+            DeploymentOptions().setConfig(config().getJsonObject("db"))
+        )
         vertx.deployVerticle(ServiceVerticle())
 
         startHttpServer()
@@ -63,10 +70,17 @@ class Main : AbstractVerticle() {
         val mainRouter = Router.router(vertx)
         mainRouter.route("/*")
             .handler(globalHandler)
+            //.handler(TimeCostHandler())
 
         JWTHolder.init(vertx)
+        ObfuscatorHolder.init()
 
         val httpServerOptions = HttpServerOptions()
+//            .setSsl(true)
+//            .setUseAlpn(true)
+//            .setPemKeyCertOptions(
+//                PemKeyCertOptions().setKeyPath("tls/server-key.pem").setCertPath("tls/server-cert.pem")
+//            )
 
         RouterBuilder.create(vertx, "src/main/resources/openapi.yaml")
             .onSuccess { routerBuilder ->
@@ -98,6 +112,6 @@ class Main : AbstractVerticle() {
 
 fun main() {
     val vertxOptions = VertxOptions()
-    vertxOptions.eventLoopPoolSize = 32
+    vertxOptions.eventLoopPoolSize = 64
     Vertx.vertx(vertxOptions).deployVerticle(Main())
 }
