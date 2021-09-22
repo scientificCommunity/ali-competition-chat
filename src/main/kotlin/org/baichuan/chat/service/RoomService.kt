@@ -9,7 +9,7 @@ import io.vertx.sqlclient.Tuple
 import org.baichuan.chat.bean.dto.CreateRoomDTO
 import org.baichuan.chat.bean.dto.ListRoomsDTO
 import org.baichuan.chat.commons.constants.CacheSizeConstants
-import org.baichuan.chat.commons.extend.badRequest
+import org.baichuan.chat.commons.extension.badRequest
 import org.baichuan.chat.db.DbHolder
 import org.baichuan.chat.jooq.Tables
 import java.util.ArrayList

@@ -1,4 +1,4 @@
-package org.baichuan.chat.commons.extend
+package org.baichuan.chat.commons.extension
 
 import io.vertx.core.AsyncResult
 import io.vertx.core.Future

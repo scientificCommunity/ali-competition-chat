@@ -11,11 +11,9 @@ import io.vertx.ext.web.impl.LRUCache
 import io.vertx.sqlclient.Tuple
 import org.baichuan.chat.bean.dto.CreateUserDTO
 import org.baichuan.chat.commons.constants.CacheSizeConstants
-import org.baichuan.chat.commons.extend.badRequest
-import org.baichuan.chat.commons.extend.toJsonObject
+import org.baichuan.chat.commons.extension.badRequest
 import org.baichuan.chat.db.DbHolder
 import org.baichuan.chat.db.dao.RoomDaoFactory
-import org.baichuan.chat.db.dao.UserDaoFactory
 import org.baichuan.chat.jooq.Tables
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

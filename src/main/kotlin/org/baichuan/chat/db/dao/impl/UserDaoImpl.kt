@@ -7,9 +7,6 @@ import io.vertx.core.json.JsonObject
 import io.vertx.reactivex.sqlclient.Pool
 import io.vertx.sqlclient.Tuple
 import org.baichuan.chat.bean.dto.CreateUserDTO
-import org.baichuan.chat.commons.extend.executeTemplate
-import org.baichuan.chat.commons.extend.toJsonObject
-import org.baichuan.chat.commons.extend.toJsonObjects
 import org.baichuan.chat.db.dao.UserDao
 import org.baichuan.chat.jooq.Tables.G_USER
 import org.jooq.DSLContext

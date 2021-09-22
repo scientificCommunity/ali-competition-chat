@@ -1,7 +1,7 @@
 package org.baichuan.chat.commons.utils.whisper
 
-import org.baichuan.chat.commons.extend.toBytes
-import org.baichuan.chat.commons.extend.toLong
+import org.baichuan.chat.commons.extension.toBytes
+import org.baichuan.chat.commons.extension.toLong
 
 
 abstract class Obfuscator {

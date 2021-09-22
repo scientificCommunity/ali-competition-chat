@@ -1,4 +1,4 @@
-package org.baichuan.chat.commons.extend
+package org.baichuan.chat.commons.extension
 
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues

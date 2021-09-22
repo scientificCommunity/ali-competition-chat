@@ -7,13 +7,9 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.api.service.ServiceRequest
 import io.vertx.ext.web.api.service.ServiceResponse
-import org.apache.commons.io.FileUtils
 import org.baichuan.chat.bean.dto.MessageRetrieveDTO
 import org.baichuan.chat.bean.dto.MessageSendDTO
-import org.baichuan.chat.commons.extend.executeWithEmptyText
-import org.baichuan.chat.commons.extend.executeWithJsonList
-import org.baichuan.chat.commons.extend.jsonArraySucceed
-import org.baichuan.chat.commons.extend.plainTextSucceed
+import org.baichuan.chat.commons.extension.jsonArraySucceed
 import org.baichuan.chat.db.DbHolder.sqlCreator
 import org.baichuan.chat.jooq.Tables
 import org.baichuan.chat.service.MessageCache
