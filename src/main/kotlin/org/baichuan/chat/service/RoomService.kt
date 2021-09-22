@@ -7,7 +7,7 @@ import io.vertx.ext.web.api.service.ServiceRequest
 import io.vertx.ext.web.api.service.ServiceResponse
 import io.vertx.ext.web.api.service.WebApiServiceGen
 import org.baichuan.chat.commons.constants.CacheSizeConstants
-import org.baichuan.chat.commons.extend.badRequest
+import org.baichuan.chat.commons.extension.badRequest
 import java.util.ArrayList
 
 /**

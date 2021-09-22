@@ -7,10 +7,10 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.api.service.ServiceRequest
 import io.vertx.ext.web.api.service.ServiceResponse
-import org.baichuan.chat.commons.extend.badRequest
-import org.baichuan.chat.commons.extend.jsonArraySucceed
-import org.baichuan.chat.commons.extend.plainTextSucceed
-import org.baichuan.chat.commons.extend.subscribeTemplate
+import org.baichuan.chat.commons.extension.badRequest
+import org.baichuan.chat.commons.extension.jsonArraySucceed
+import org.baichuan.chat.commons.extension.plainTextSucceed
+import org.baichuan.chat.commons.extension.subscribeTemplate
 import org.baichuan.chat.service.RedisFactory
 import org.baichuan.chat.service.RoomService
 import org.baichuan.chat.service.RoomServiceLocalCache

@@ -1,4 +1,4 @@
-package org.baichuan.chat.commons.extend
+package org.baichuan.chat.commons.extension
 
 import java.nio.ByteBuffer
 import java.time.LocalDateTime

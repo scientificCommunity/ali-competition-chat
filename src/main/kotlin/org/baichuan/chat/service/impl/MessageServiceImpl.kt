@@ -1,6 +1,5 @@
 package org.baichuan.chat.service.impl
 
-import io.reactivex.Maybe
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
@@ -8,11 +7,10 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.api.service.ServiceRequest
 import io.vertx.ext.web.api.service.ServiceResponse
-import io.vertx.reactivex.redis.client.Response
-import org.baichuan.chat.commons.extend.badRequest
-import org.baichuan.chat.commons.extend.jsonArraySucceed
-import org.baichuan.chat.commons.extend.plainTextSucceed
-import org.baichuan.chat.commons.extend.subscribeTemplate
+import org.baichuan.chat.commons.extension.badRequest
+import org.baichuan.chat.commons.extension.jsonArraySucceed
+import org.baichuan.chat.commons.extension.plainTextSucceed
+import org.baichuan.chat.commons.extension.subscribeTemplate
 import org.baichuan.chat.service.MessageService
 import org.baichuan.chat.service.RedisFactory
 import org.baichuan.chat.service.RoomServiceLocalCache

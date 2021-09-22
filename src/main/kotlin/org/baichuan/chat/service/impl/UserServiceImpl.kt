@@ -6,11 +6,10 @@ import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.api.service.ServiceRequest
 import io.vertx.ext.web.api.service.ServiceResponse
-import org.apache.commons.lang3.StringUtils
-import org.baichuan.chat.commons.extend.badRequest
-import org.baichuan.chat.commons.extend.jsonSucceed
-import org.baichuan.chat.commons.extend.plainTextSucceed
-import org.baichuan.chat.commons.extend.subscribeTemplate
+import org.baichuan.chat.commons.extension.badRequest
+import org.baichuan.chat.commons.extension.jsonSucceed
+import org.baichuan.chat.commons.extension.plainTextSucceed
+import org.baichuan.chat.commons.extension.subscribeTemplate
 import org.baichuan.chat.commons.utils.JWTUtils
 import org.baichuan.chat.service.RedisFactory
 import org.baichuan.chat.service.UserService
