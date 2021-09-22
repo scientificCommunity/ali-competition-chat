@@ -6,9 +6,6 @@ import io.vertx.core.Handler
 import io.vertx.core.json.JsonObject
 import io.vertx.reactivex.sqlclient.Pool
 import io.vertx.sqlclient.Tuple
-import org.baichuan.chat.commons.extend.executeTemplate
-import org.baichuan.chat.commons.extend.toJsonObject
-import org.baichuan.chat.commons.extend.toJsonObjects
 import org.baichuan.chat.db.dao.RoomDao
 import org.baichuan.chat.jooq.Tables.G_ROOM
 import org.jooq.DSLContext

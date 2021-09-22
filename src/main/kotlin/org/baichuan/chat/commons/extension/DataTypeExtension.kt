@@ -1,6 +1,5 @@
-package org.baichuan.chat.commons.extend
+package org.baichuan.chat.commons.extension
 
-import io.vertx.core.json.JsonObject
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
 import java.nio.ByteBuffer

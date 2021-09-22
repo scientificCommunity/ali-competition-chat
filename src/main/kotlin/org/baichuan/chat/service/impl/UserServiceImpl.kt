@@ -7,13 +7,11 @@ import io.vertx.ext.web.api.service.ServiceRequest
 import io.vertx.ext.web.api.service.ServiceResponse
 import io.vertx.sqlclient.Tuple
 import org.baichuan.chat.bean.dto.CreateUserDTO
-import org.baichuan.chat.commons.constants.CacheSizeConstants
 import org.baichuan.chat.commons.constants.CacheSizeConstants.size_524288
-import org.baichuan.chat.commons.extend.*
+import org.baichuan.chat.commons.extension.*
 import org.baichuan.chat.commons.utils.JWTUtils
 import org.baichuan.chat.db.DbHolder.sqlClient
 import org.baichuan.chat.db.DbHolder.sqlCreator
-import org.baichuan.chat.db.dao.UserDaoFactory
 import org.baichuan.chat.jooq.Tables
 import org.baichuan.chat.service.UserLocalCache
 import org.baichuan.chat.service.UserService

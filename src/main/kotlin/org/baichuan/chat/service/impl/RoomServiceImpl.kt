@@ -10,12 +10,10 @@ import io.vertx.sqlclient.Tuple
 import org.baichuan.chat.bean.dto.CreateRoomDTO
 import org.baichuan.chat.bean.dto.ListRoomsDTO
 import org.baichuan.chat.commons.constants.CacheSizeConstants
-import org.baichuan.chat.commons.extend.*
-import org.baichuan.chat.commons.utils.whisper.ObfuscatorHolder
+import org.baichuan.chat.commons.extension.*
 import org.baichuan.chat.db.DbHolder
 import org.baichuan.chat.db.DbHolder.sqlClient
 import org.baichuan.chat.db.DbHolder.sqlCreator
-import org.baichuan.chat.db.dao.RoomDaoFactory
 import org.baichuan.chat.jooq.Tables.G_ROOM
 import org.baichuan.chat.service.RoomService
 import org.baichuan.chat.service.RoomServiceLocalCache

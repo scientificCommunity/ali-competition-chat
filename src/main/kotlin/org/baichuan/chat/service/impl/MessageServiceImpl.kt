@@ -10,17 +10,9 @@ import io.vertx.ext.web.api.service.ServiceResponse
 import org.apache.commons.lang3.StringUtils
 import org.baichuan.chat.bean.dto.MessageRetrieveDTO
 import org.baichuan.chat.bean.dto.MessageSendDTO
-import org.baichuan.chat.commons.extend.executeWithJsonList
-import org.baichuan.chat.commons.extend.jsonArraySucceed
-import org.baichuan.chat.commons.extend.plainTextSucceed
+import org.baichuan.chat.commons.extension.jsonArraySucceed
+import org.baichuan.chat.commons.extension.plainTextSucceed
 import org.baichuan.chat.commons.utils.FileUtils
-import org.baichuan.chat.db.DbHolder.sqlCreator
-import org.baichuan.chat.jooq.Tables
-import org.baichuan.chat.service.MessageCache.newlyMessageCache
-import org.baichuan.chat.service.MessageCache.pageLimit
-import org.baichuan.chat.service.MessageCache.pageLimitNag
-import org.baichuan.chat.service.MessageCache.roomIdMessageCacheCount
-import org.baichuan.chat.service.MessageCache.singleRoomMessageCacheLimit
 import org.baichuan.chat.service.MessageService
 import org.baichuan.chat.service.RoomServiceLocalCache
 
